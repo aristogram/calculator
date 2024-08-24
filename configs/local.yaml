@@ -1,4 +1,0 @@
-env: "local"
-grpc:
-  port: 12321
-  timeout: 2h # prod: 5s
