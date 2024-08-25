@@ -17,18 +17,18 @@ type Calculator interface {
 
 type serverAPI struct {
 	calcv1.UnimplementedCalcServer
-	Calculator
+	calc Calculator
 }
 
-func Register(gRPC *grpc.Server) {
-	calcv1.RegisterCalcServer(gRPC, serverAPI{})
+func Register(gRPC *grpc.Server, calc Calculator) {
+	calcv1.RegisterCalcServer(gRPC, serverAPI{calc: calc})
 }
 
 func (s serverAPI) CalcExpr(
 	ctx context.Context,
 	expr *calcv1.ExpressionRequest,
 ) (*calcv1.Answer, error) {
-	ans, err := s.Calculate(ctx, expr)
+	ans, err := s.calc.Calculate(ctx, expr)
 
 	if err != nil {
 		return nil, status.Error(codes.InvalidArgument, "Invalid expression")

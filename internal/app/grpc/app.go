@@ -15,10 +15,14 @@ type App struct {
 	port       int
 }
 
-func New(log *slog.Logger, port int) *App {
+func New(
+	log *slog.Logger,
+	calc handler.Calculator,
+	port int,
+) *App {
 	grpcServer := grpc.NewServer()
 
-	handler.Register(grpcServer)
+	handler.Register(grpcServer, calc)
 
 	return &App{
 		log:        log,
@@ -44,13 +48,13 @@ func (a *App) run() error {
 	l, err := net.Listen("tcp", fmt.Sprintf(":%d", a.port))
 
 	if err != nil {
-		return fmt.Errorf("%s: %w", op, err)
+		return fmt.Errorf("%v: %w", op, err)
 	}
 
 	log.Info("gRPC server is running", slog.String("addr", l.Addr().String()))
 
 	if err := a.gRPCServer.Serve(l); err != nil {
-		return fmt.Errorf("%s: %w", op, err)
+		return fmt.Errorf("%v: %w", op, err)
 	}
 
 	return nil

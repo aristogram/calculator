@@ -2,6 +2,7 @@ package app
 
 import (
 	grpcapp "calculator/internal/app/grpc"
+	"calculator/internal/services/calc"
 	"log/slog"
 )
 
@@ -10,7 +11,9 @@ type App struct {
 }
 
 func New(log *slog.Logger, port int) *App {
-	grpcApp := grpcapp.New(log, port)
+	calcService := calc.New(log)
+
+	grpcApp := grpcapp.New(log, calcService, port)
 
 	return &App{
 		GRPCServer: grpcApp,
