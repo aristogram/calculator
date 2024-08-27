@@ -59,7 +59,13 @@ func (c *Calculator) Calculate(
 	).Info("calculating expression")
 
 	// TODO: create converter to "normal" format for newbies that give wrong expression's format.
-	parts := exprDivider(expr.GetExpr())
+	return CalculateExpr(expr.GetExpr())
+}
+
+func CalculateExpr(expr string) (string, error) {
+	const op = "calc.CalculateExpr"
+
+	parts := exprDivider(expr)
 	if err := validateParts(parts); err != nil {
 		return "", fmt.Errorf("%s: %w", op, err)
 	}
@@ -182,20 +188,20 @@ func calcRPN(queue []string) (string, error) {
 
 		switch op {
 		case add:
-			resStack = append(resStack, fmt.Sprintf("%f", op1+op2))
+			resStack = append(resStack, fmt.Sprintf("%g", op1+op2))
 		case sub:
-			resStack = append(resStack, fmt.Sprintf("%f", op1-op2))
+			resStack = append(resStack, fmt.Sprintf("%g", op1-op2))
 		case mul:
-			resStack = append(resStack, fmt.Sprintf("%f", op1*op2))
+			resStack = append(resStack, fmt.Sprintf("%g", op1*op2))
 		case div:
-			resStack = append(resStack, fmt.Sprintf("%f", op1/op2))
+			resStack = append(resStack, fmt.Sprintf("%g", op1/op2))
 		case pow:
-			resStack = append(resStack, fmt.Sprintf("%f", math.Pow(op1, op2)))
+			resStack = append(resStack, fmt.Sprintf("%g", math.Pow(op1, op2)))
 		case root:
-			resStack = append(resStack, fmt.Sprintf("%f", math.Pow(op2, 1/op1)))
+			resStack = append(resStack, fmt.Sprintf("%g", math.Pow(op2, 1/op1)))
 		case log:
 			// log(a)b = log(2)b/log(2)a
-			resStack = append(resStack, fmt.Sprintf("%f", math.Log(op2)/math.Log(op1)))
+			resStack = append(resStack, fmt.Sprintf("%g", math.Log(op2)/math.Log(op1)))
 		default:
 			return "", fmt.Errorf("unknown operator: %v", op)
 		}
